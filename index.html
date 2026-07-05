@@ -3,483 +3,955 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BrepGaussian: CAD reconstruction from multi-view images with Gaussian Splatting.">
-  <title>BrepGaussian | CAD Reconstruction from Multi-View Images</title>
+  <meta name="description" content="BrepGaussian: CAD reconstruction from Multi-View Images with Gaussian Splatting.">
+  <title>BrepGaussian</title>
   <style>
     :root {
-      color-scheme: light;
-      --ink: #172026;
-      --muted: #61707d;
-      --line: #d9e1e7;
-      --paper: #ffffff;
-      --band: #f4f8f7;
-      --accent: #0b6b78;
-      --accent-2: #b55233;
-      --soft: #e8f2f1;
-      --shadow: 0 18px 50px rgba(23, 32, 38, 0.1);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --blue: #2878bd;
+      --blue-dark: #1f5f99;
+      --text: #222;
+      --muted: #666;
+      --line: #e5e5e5;
+      --panel: #f7f9fb;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; color: var(--ink); background: var(--paper); line-height: 1.6; }
-    a { color: inherit; text-decoration: none; }
-    h1, h2, h3, p { margin-top: 0; }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      border-bottom: 1px solid rgba(217, 225, 231, 0.8);
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(14px);
-    }
-
-    .nav {
-      width: min(1120px, calc(100% - 32px));
-      min-height: 62px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
-
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 760;
-      white-space: nowrap;
-    }
-
-    .brand-mark {
-      width: 28px;
-      height: 28px;
-      display: inline-grid;
-      place-items: center;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: linear-gradient(135deg, #edf7f6, #fff2ec);
-      color: var(--accent);
-      font-size: 15px;
-      font-weight: 800;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      color: var(--muted);
-      font-size: 14px;
-      font-weight: 650;
-    }
-
-    .nav-links a:hover { color: var(--accent); }
+    body { margin: 0; color: var(--text); background: #fff; line-height: 1.55; }
+    a { color: inherit; }
 
     .hero {
-      border-bottom: 1px solid var(--line);
-      background:
-        linear-gradient(120deg, rgba(11, 107, 120, 0.08), rgba(181, 82, 51, 0.08) 46%, rgba(255, 255, 255, 0) 72%),
-        var(--paper);
+      background: var(--blue);
+      color: #fff;
+      padding: 42px 16px 46px;
+      text-align: center;
     }
 
-    .hero-inner {
-      width: min(1120px, calc(100% - 32px));
-      min-height: calc(100vh - 62px);
+    .hero-box {
+      width: min(980px, 100%);
       margin: 0 auto;
-      padding: 70px 0 44px;
-      display: grid;
-      grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
-      gap: 54px;
-      align-items: center;
-    }
-
-    .eyebrow {
-      margin: 0 0 14px;
-      color: var(--accent);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      padding: 26px 24px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     h1 {
-      max-width: 820px;
-      margin-bottom: 18px;
-      font-size: clamp(42px, 6.8vw, 78px);
-      line-height: 0.98;
+      margin: 0 0 10px;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 1.08;
+      font-weight: 700;
       letter-spacing: 0;
     }
 
     .subtitle {
-      max-width: 720px;
-      margin-bottom: 24px;
-      color: #384955;
-      font-size: clamp(18px, 2.2vw, 23px);
-      line-height: 1.4;
+      margin: 0 0 18px;
+      font-size: clamp(18px, 2.6vw, 24px);
+      font-weight: 400;
     }
 
-    .authors {
-      max-width: 740px;
-      margin-bottom: 10px;
-      color: var(--ink);
+    .authors,
+    .affiliations {
+      max-width: 900px;
+      margin: 0 auto 8px;
       font-size: 15px;
-      font-weight: 650;
     }
 
-    .venue { margin-bottom: 28px; color: var(--muted); font-size: 15px; }
+    .affiliations { opacity: 0.92; }
 
-    .actions {
+    .links {
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-
-    .button {
-      min-height: 44px;
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      padding: 0 16px;
-      border: 1px solid var(--line);
-      border-radius: 7px;
-      background: #fff;
-      color: var(--ink);
-      font-size: 14px;
-      font-weight: 750;
-      box-shadow: 0 8px 24px rgba(23, 32, 38, 0.05);
-      transition: transform 160ms ease, box-shadow 160ms ease;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
     }
 
-    .button.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
-    .button:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(23, 32, 38, 0.1); }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1px;
-      overflow: hidden;
-      max-width: 610px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--line);
-    }
-
-    .stat { min-height: 88px; padding: 16px; background: rgba(255, 255, 255, 0.82); }
-    .stat strong { display: block; margin-bottom: 3px; color: var(--accent-2); font-size: 20px; line-height: 1.2; }
-    .stat span { color: var(--muted); font-size: 13px; font-weight: 650; }
-
-    .visual-stack { display: grid; gap: 16px; }
-
-    .placeholder {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background:
-        linear-gradient(90deg, rgba(11, 107, 120, 0.08) 1px, transparent 1px),
-        linear-gradient(rgba(11, 107, 120, 0.08) 1px, transparent 1px),
-        linear-gradient(135deg, #f7fbfb, #fff5ef);
-      background-size: 28px 28px, 28px 28px, auto;
-      box-shadow: var(--shadow);
-    }
-
-    .hero-figure { aspect-ratio: 1.22; min-height: 360px; }
-
-    .placeholder-content {
-      position: absolute;
-      inset: 28px;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      gap: 18px;
-    }
-
-    .diagram {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      align-items: center;
-    }
-
-    .diagram-cell {
-      min-height: 172px;
-      display: grid;
-      place-items: center;
-      padding: 14px;
-      border: 1px solid rgba(11, 107, 120, 0.18);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--muted);
-      text-align: center;
-      font-size: 13px;
-      font-weight: 750;
-    }
-
-    .diagram-cell:nth-child(2) { border-color: rgba(181, 82, 51, 0.22); background: rgba(255, 246, 241, 0.78); }
-
-    .placeholder-caption {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      color: #3b4d58;
-      font-size: 13px;
+    .link-button {
+      min-width: 108px;
+      padding: 9px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.13);
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
       font-weight: 700;
     }
 
-    .mini-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-    .mini {
-      min-height: 94px;
-      display: grid;
-      place-items: center;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 750;
+    .link-button:hover { background: rgba(255, 255, 255, 0.22); }
+
+    main {
+      width: min(980px, calc(100% - 28px));
+      margin: 0 auto;
+    }
+
+    section { padding: 34px 0; border-bottom: 1px solid var(--line); }
+    section:last-child { border-bottom: 0; }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 28px;
+      line-height: 1.2;
       text-align: center;
-      box-shadow: 0 10px 26px rgba(23, 32, 38, 0.06);
     }
 
-    main section { border-bottom: 1px solid var(--line); }
-    .section-inner { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 74px 0; }
-    .section-head { max-width: 760px; margin-bottom: 28px; }
-    h2 { margin-bottom: 12px; font-size: clamp(29px, 4vw, 46px); line-height: 1.08; letter-spacing: 0; }
-    .lead { color: var(--muted); font-size: 18px; line-height: 1.58; }
+    p { margin: 0 0 14px; }
 
-    .abstract { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 42px; align-items: start; }
-    .abstract p { color: #2f414d; font-size: 17px; }
-    .callout { padding: 26px; border-left: 4px solid var(--accent); background: var(--band); }
-    .callout h3 { margin-bottom: 8px; font-size: 19px; }
-    .callout p { margin-bottom: 0; color: var(--muted); font-size: 15px; }
-
-    .pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; counter-reset: step; }
-    .step { min-height: 238px; padding: 24px; border: 1px solid var(--line); border-radius: 8px; background: #fff; counter-increment: step; }
-    .step::before {
-      content: "0" counter(step);
-      display: inline-grid;
-      width: 38px;
-      height: 38px;
-      place-items: center;
-      margin-bottom: 22px;
-      border-radius: 7px;
-      background: var(--soft);
-      color: var(--accent);
-      font-weight: 850;
+    .pipeline-image,
+    .poster-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto;
     }
-    .step h3 { margin-bottom: 8px; font-size: 18px; line-height: 1.24; }
-    .step p { margin-bottom: 0; color: var(--muted); font-size: 14px; }
 
-    .wide-placeholder { aspect-ratio: 2.45; min-height: 280px; margin-top: 26px; box-shadow: none; }
+    .poster-image {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+    }
 
-    .results-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .result { min-height: 260px; display: grid; grid-template-rows: 1fr auto; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #fff; }
-    .result-visual {
+    .note-box {
+      padding: 18px 20px;
+      border: 1px solid #d9e5ef;
+      border-left: 5px solid var(--blue);
+      border-radius: 4px;
+      background: var(--panel);
+      font-size: 16px;
+    }
+
+    .text-block {
+      max-width: 900px;
+      margin: 0 auto;
+      font-size: 16px;
+      text-align: justify;
+    }
+
+    .viewer {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .image-placeholder,
+    .obj-viewer {
+      min-height: 430px;
+      border: 1px solid #cfd8e3;
+      border-radius: 4px;
+      background: #fbfdff;
+    }
+
+    .image-placeholder {
       display: grid;
       place-items: center;
-      min-height: 190px;
-      background:
-        linear-gradient(90deg, rgba(23, 32, 38, 0.06) 1px, transparent 1px),
-        linear-gradient(rgba(23, 32, 38, 0.06) 1px, transparent 1px),
-        #f8faf9;
-      background-size: 22px 22px;
+      padding: 20px;
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 760;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      background:
+        linear-gradient(90deg, rgba(40, 120, 189, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(40, 120, 189, 0.08) 1px, transparent 1px),
+        #fbfdff;
+      background-size: 26px 26px;
     }
-    .result p { margin: 0; padding: 16px; color: #3c4d58; font-size: 14px; font-weight: 650; }
 
-    .resources { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1.15fr); gap: 34px; align-items: start; }
-    .resource-list { display: grid; gap: 12px; }
-    .resource-item {
+    .image-placeholder span,
+    .viewer-status {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .obj-viewer {
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 36%, #ffffff 0%, #f3f8fc 62%, #e8f1f8 100%);
+    }
+
+    #modelCanvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .viewer-status {
+      position: absolute;
+      left: 12px;
+      bottom: 10px;
+      margin: 0;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--muted);
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .intro-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #fff;
+    }
+
+    .intro-item strong { display: block; margin-bottom: 6px; color: var(--blue-dark); }
+    .intro-item p { margin: 0; color: var(--muted); font-size: 14px; }
+
+
+    pre {
+      overflow: auto;
+      margin: 0;
+      padding: 18px;
+      border-radius: 4px;
+      background: #f5f5f5;
+      border: 1px solid var(--line);
+      color: #222;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    footer {
+      padding: 24px 16px 34px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 720px) {
+      .hero { padding-top: 24px; }
+      .hero-box { padding: 20px 14px; }
+      .intro-grid { grid-template-columns: 1fr; }
+      .viewer { grid-template-columns: 1fr; }
+      .image-placeholder,
+      .obj-viewer { min-height: 320px; }
+      #modelCanvas { height: 320px; }
+    }
+
+    .viewer-toolbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      min-height: 60px;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fff;
-      font-weight: 750;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: -4px 0 14px;
+      color: var(--muted);
+      font-size: 14px;
     }
-    .resource-item span { color: var(--muted); font-size: 13px; font-weight: 650; }
 
-    pre { overflow: auto; margin: 0; padding: 22px; border: 1px solid var(--line); border-radius: 8px; background: #172026; color: #eef8f6; font-size: 13px; line-height: 1.48; }
-    .footer { padding: 34px 16px; color: var(--muted); text-align: center; font-size: 13px; }
+    .viewer-toolbar select {
+      min-width: 150px;
+      padding: 6px 9px;
+      border: 1px solid #cfd8e3;
+      border-radius: 4px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .viewer-toolbar label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    #modelCanvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+    }
+
+    .label-legend {
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 5px;
+      max-width: min(62%, 360px);
+      padding: 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.84);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .label-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .label-chip i {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .viewer-three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .viewer-panel {
+      position: relative;
+      min-height: 430px;
+      border: 1px solid #cfd8e3;
+      border-radius: 4px;
+      background: #fbfdff;
+      overflow: hidden;
+    }
+
+    .viewer-panel h3 {
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      z-index: 2;
+      margin: 0;
+      padding: 4px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--blue-dark);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .render-panel canvas {
+      display: block;
+      width: 100%;
+      height: 430px;
+      background: radial-gradient(circle at 50% 36%, #ffffff 0%, #f4f7fb 66%, #e9eef5 100%);
+    }
+
+    .image-placeholder {
+      min-height: 430px;
+      padding: 48px 20px 20px;
+    }
+
+    .image-placeholder > div {
+      height: 100%;
+      min-height: 350px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      background:
+        linear-gradient(90deg, rgba(40, 120, 189, 0.08) 1px, transparent 1px),
+        linear-gradient(rgba(40, 120, 189, 0.08) 1px, transparent 1px),
+        #fbfdff;
+      background-size: 26px 26px;
+    }
 
     @media (max-width: 900px) {
-      .nav { align-items: flex-start; flex-direction: column; justify-content: center; padding: 12px 0; }
-      .nav-links { width: 100%; overflow-x: auto; padding-bottom: 2px; }
-      .hero-inner, .abstract, .resources { grid-template-columns: 1fr; }
-      .hero-inner { min-height: auto; padding-top: 46px; }
-      .hero-figure { min-height: 310px; }
-      .pipeline, .results-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .viewer-three { grid-template-columns: 1fr; }
+      .viewer-panel,
+      .image-placeholder { min-height: 320px; }
+      .render-panel canvas { height: 320px; }
+      .image-placeholder > div { min-height: 240px; }
     }
 
-    @media (max-width: 620px) {
-      .nav-links { gap: 14px; }
-      .hero-inner, .section-inner { width: min(100% - 22px, 1120px); }
-      h1 { font-size: 42px; }
-      .stats, .pipeline, .results-grid, .mini-strip { grid-template-columns: 1fr; }
-      .diagram { grid-template-columns: 1fr; }
-      .placeholder-content { inset: 16px; }
-      .hero-figure { aspect-ratio: auto; min-height: 620px; }
-      .wide-placeholder { aspect-ratio: auto; min-height: 520px; }
-      .placeholder-caption, .resource-item { align-items: flex-start; flex-direction: column; }
+    .image-grid {
+      height: 100%;
+      min-height: 350px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      background: #fff;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border: 1px solid #d8e1ea;
+      border-radius: 3px;
+      background: #f5f5f5;
+    }
+
+    .image-grid-empty {
+      grid-column: 1 / -1;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .viewer-three .image-placeholder {
+      display: block;
+      place-items: initial;
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <nav class="nav" aria-label="Project navigation">
-      <a class="brand" href="#"><span class="brand-mark">B</span><span>BrepGaussian</span></a>
-      <div class="nav-links">
-        <a href="#abstract">Abstract</a>
-        <a href="#method">Method</a>
-        <a href="#results">Results</a>
-        <a href="#resources">Resources</a>
-        <a href="#citation">Citation</a>
-      </div>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <div class="hero-inner">
-      <div>
-        <p class="eyebrow">CVPR 2026 / CAD Reconstruction</p>
-        <h1>BrepGaussian</h1>
-        <p class="subtitle">CAD reconstruction from Multi-View Images with Gaussian Splatting.</p>
-        <p class="authors">Jiaxing Yu, Dongyang Ren, Hangyu Xu, Zhouyuxiao Yang, Yuanqi Li, Jie Guo, Zhengkang Zhou, Yanwen Guo</p>
-        <p class="venue">Accepted to CVPR 2026. arXiv:2602.21105. Last revised April 8, 2026.</p>
-        <div class="actions">
-          <a class="button primary" href="https://arxiv.org/abs/2602.21105" target="_blank" rel="noreferrer">Paper</a>
-          <a class="button" href="https://arxiv.org/pdf/2602.21105" target="_blank" rel="noreferrer">PDF</a>
-          <a class="button" href="#citation">BibTeX</a>
-          <a class="button" href="#resources">Code</a>
-        </div>
-        <div class="stats" aria-label="Project highlights">
-          <div class="stat"><strong>2D to B-Rep</strong><span>from multi-view images</span></div>
-          <div class="stat"><strong>3DGS</strong><span>feature-aware rendering</span></div>
-          <div class="stat"><strong>Two-stage</strong><span>geometry then instances</span></div>
-        </div>
-      </div>
-
-      <div class="visual-stack">
-        <figure class="placeholder hero-figure" aria-label="Main project image placeholder">
-          <div class="placeholder-content">
-            <div class="diagram">
-              <div class="diagram-cell">Multi-view<br>images</div>
-              <div class="diagram-cell">B-Rep Gaussian<br>Splatting</div>
-              <div class="diagram-cell">CAD<br>boundaries</div>
-            </div>
-            <figcaption class="placeholder-caption"><span>Main teaser placeholder</span><span>Replace with method or reconstruction figure</span></figcaption>
-          </div>
-        </figure>
-        <div class="mini-strip" aria-label="Result thumbnail placeholders">
-          <div class="mini">Input views</div>
-          <div class="mini">Gaussians</div>
-          <div class="mini">Patch features</div>
-          <div class="mini">B-Rep CAD</div>
-        </div>
+  <header class="hero">
+    <div class="hero-box">
+      <h1>BrepGaussian</h1>
+      <p class="subtitle">CAD reconstruction from Multi-View Images with Gaussian Splatting</p>
+      <p class="authors">Jiaxing Yu, Dongyang Ren, Hangyu Xu, Zhouyuxiao Yang, Yuanqi Li, Jie Guo, Zhengkang Zhou, Yanwen Guo</p>
+      <p class="affiliations">State Key Laboratory of Novel Software Technology, Nanjing University<br></p>
+      <div class="links">
+        <a class="link-button" href="https://arxiv.org/abs/2602.21105" target="_blank" rel="noreferrer">arXiv</a>
+        <a class="link-button" href="https://arxiv.org/pdf/2602.21105" target="_blank" rel="noreferrer">PDF</a>
+        <a class="link-button" href="https://github.com/yjx2851/BrepGaussian">GitHub</a>
       </div>
     </div>
-  </section>
+  </header>
 
   <main>
+    <section aria-label="Pipeline">
+      <img class="pipeline-image" src="pipeline.png" alt="BrepGaussian pipeline overview">
+    </section>
+
+    <section aria-label="Summary">
+      <div class="note-box">
+        Given multi-view images of a CAD object, BrepGaussian reconstructs a B-Rep CAD model through feature-aware Gaussian Splatting and parametric surface fitting. The learned Gaussian representation produces geometry with edge and patch labels, enabling reconstruction of surfaces, curves, and final boundary representations.
+      </div>
+    </section>
+
     <section id="abstract">
-      <div class="section-inner abstract">
-        <div>
-          <p class="eyebrow">Abstract</p>
-          <h2>Recovering editable CAD structure from ordinary images.</h2>
-          <p>B-Rep models describe a 3D solid through explicit trimmed faces, edges, and corners. BrepGaussian tackles the challenge of recovering this structured representation directly from multi-view images, avoiding dependence on dense and clean point-cloud input.</p>
-          <p>The framework learns 3D parametric representations from 2D images with a Gaussian Splatting renderer and learnable features. A two-stage learning design first captures geometry and edges, then refines patch features for clean geometry and coherent instance representations.</p>
-          <p>Experiments in the paper report superior performance against recent state-of-the-art methods, moving image-based reconstruction closer to usable boundary representations.</p>
-        </div>
-        <aside class="callout">
-          <h3>Why it matters</h3>
-          <p>BrepGaussian connects image-based neural rendering with explicit CAD recovery: the representation is learned from views, while the target output remains structured B-Rep rather than only a visual surface.</p>
-        </aside>
+      <h2>Abstract</h2>
+      <div class="text-block">
+        <p>The boundary representation (B-Rep) models a 3D solid as its explicit boundaries: trimmed corners, edges, and faces. Recovering B-Rep representation from unstructured data is a challenging and valuable task of computer vision and graphics.
+        We propose B-Rep Gaussian Splatting (BrepGaussian), a novel framework that learns 3D parametric representations from 2D images. We employ a Gaussian Splatting renderer with learnable features, followed by a specific fitting strategy. To disentangle geometry reconstruction and feature learning, we introduce a two-stage learning framework that first captures geometry and edges and then refines patch features to achieve clean geometry and coherent instance representations.
+        Extensive experiments demonstrate the superior performance of our approach to state-of-the-art methods.</p>
       </div>
     </section>
 
-    <section id="method">
-      <div class="section-inner">
-        <div class="section-head">
-          <p class="eyebrow">Method</p>
-          <h2>A two-stage path from views to CAD boundaries.</h2>
-          <p class="lead">The framework separates geometry reconstruction from feature refinement, making the learned representation useful for both shape recovery and patch-level organization.</p>
-        </div>
-        <div class="pipeline">
-          <article class="step"><h3>Multi-view capture</h3><p>Images provide the observation signal for reconstructing the object without relying on a clean scanned point cloud.</p></article>
-          <article class="step"><h3>Geometry learning</h3><p>A Gaussian Splatting renderer captures 3D shape structure and edge-aware cues from view supervision.</p></article>
-          <article class="step"><h3>Patch refinement</h3><p>Learnable features are optimized to form coherent surface instances that support downstream fitting.</p></article>
-          <article class="step"><h3>B-Rep fitting</h3><p>The reconstructed geometry and features are converted into explicit CAD boundaries and surface patches.</p></article>
-        </div>
-        <figure class="placeholder wide-placeholder" aria-label="Method diagram placeholder">
-          <div class="placeholder-content">
-            <div class="diagram">
-              <div class="diagram-cell">Stage 1<br>geometry and edges</div>
-              <div class="diagram-cell">Stage 2<br>patch features</div>
-              <div class="diagram-cell">B-Rep<br>fitting</div>
-            </div>
-            <figcaption class="placeholder-caption"><span>Pipeline figure placeholder</span><span>Use this space for the paper method overview</span></figcaption>
-          </div>
-        </figure>
+    <section id="visualization">
+      <h2>Visualization</h2>
+      <div class="viewer-toolbar">
+        <label for="modelSelect">Model</label>
+        <select id="modelSelect"></select>
       </div>
-    </section>
-
-    <section id="results">
-      <div class="section-inner">
-        <div class="section-head">
-          <p class="eyebrow">Results</p>
-          <h2>Clean geometry and coherent surface instances.</h2>
-          <p class="lead">Reserve these panels for qualitative comparisons, ablations, and reconstruction examples from the paper.</p>
+      <div class="viewer viewer-three">
+        <div class="viewer-panel image-placeholder">
+          <h3>Input Image</h3>
+          <div class="image-grid" id="imageGrid"></div>
         </div>
-        <div class="results-grid">
-          <article class="result"><div class="result-visual">Qualitative comparison</div><p>Place side-by-side input, baseline, and BrepGaussian reconstructions here.</p></article>
-          <article class="result"><div class="result-visual">Instance segmentation</div><p>Show patch-level feature consistency and recovered face instances.</p></article>
-          <article class="result"><div class="result-visual">Ablation study</div><p>Highlight the effect of two-stage training and fitting choices.</p></article>
+        <div class="viewer-panel render-panel">
+          <h3>Point Cloud</h3>
+          <canvas id="cloudCanvas" aria-label="Rotating label-colored point cloud viewer"></canvas>
+          <div class="label-legend" id="labelLegend"></div>
+          <span class="viewer-status" id="cloudStatus">Loading point cloud...</span>
+        </div>
+        <div class="viewer-panel render-panel">
+          <h3>Mesh Model</h3>
+          <canvas id="meshCanvas" aria-label="Rotating opaque mesh model viewer"></canvas>
+          <span class="viewer-status" id="meshStatus">Loading mesh...</span>
         </div>
       </div>
     </section>
 
-    <section id="resources">
-      <div class="section-inner resources">
-        <div>
-          <p class="eyebrow">Resources</p>
-          <h2>Paper, code, data, and presentation material.</h2>
-          <p class="lead">The links below are ready for release assets. Keep placeholders until the public repository, poster, video, or dataset pages are available.</p>
-        </div>
-        <div class="resource-list">
-          <a class="resource-item" href="https://arxiv.org/abs/2602.21105" target="_blank" rel="noreferrer"><strong>arXiv paper</strong><span>2602.21105</span></a>
-          <a class="resource-item" href="https://arxiv.org/pdf/2602.21105" target="_blank" rel="noreferrer"><strong>PDF</strong><span>full paper</span></a>
-          <a class="resource-item" href="#"><strong>Code</strong><span>coming soon</span></a>
-          <a class="resource-item" href="#"><strong>Poster / Video</strong><span>placeholder</span></a>
-        </div>
-      </div>
+
+    <section id="poster">
+      <h2>Poster</h2>
+      <img class="poster-image" src="poster.png" alt="BrepGaussian CVPR 2026 poster">
     </section>
 
     <section id="citation">
-      <div class="section-inner">
-        <div class="section-head">
-          <p class="eyebrow">Citation</p>
-          <h2>Cite BrepGaussian.</h2>
-        </div>
-        <pre><code>@misc{yu2026brepgaussian,
-  title={BrepGaussian: CAD reconstruction from Multi-View Images with Gaussian Splatting},
-  author={Yu, Jiaxing and Ren, Dongyang and Xu, Hangyu and Yang, Zhouyuxiao and Li, Yuanqi and Guo, Jie and Zhou, Zhengkang and Guo, Yanwen},
-  year={2026},
-  eprint={2602.21105},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV}
+      <h2>Citation</h2>
+      <pre><code>@InProceedings{Yu_2026_CVPR,
+        author    = {Yu, Jiaxing and Ren, Dongyang and Xu, Hangyu and Yang, Zhouyuxiao and Li, Yuanqi and Guo, Jie and Zhou, Zhengkang and Guo, Yanwen},
+        title     = {BrepGaussian: CAD reconstruction from Multi-View Images with Gaussian Splatting},
+        booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+        month     = {June},
+        year      = {2026},
+        pages     = {26104--26113}
+      }
 }</code></pre>
-      </div>
     </section>
   </main>
 
-  <footer class="footer">BrepGaussian project page. Replace placeholders with paper figures, videos, and repository links when ready.</footer>
+  <footer>BrepGaussian project page. GitHub, visualization data, and poster can be linked when available.</footer>
+
+
+
+  <script>
+    (() => {
+      const cloudCanvas = document.getElementById('cloudCanvas');
+      const meshCanvas = document.getElementById('meshCanvas');
+      const cloudStatus = document.getElementById('cloudStatus');
+      const meshStatus = document.getElementById('meshStatus');
+      const select = document.getElementById('modelSelect');
+      const imageGrid = document.getElementById('imageGrid');
+      const labelLegend = document.getElementById('labelLegend');
+      if (!cloudCanvas || !meshCanvas) return;
+
+      const cloudCtx = cloudCanvas.getContext('2d');
+      const gl = meshCanvas.getContext('webgl', { antialias: true });
+      const palette = ['#2878bd', '#df6b46', '#5aa469', '#8a6fdf', '#e2a23a', '#38a6a5', '#c85c8e', '#6f7f8f', '#95b23d', '#bd5f38', '#4b8fd8', '#d45d79', '#7a9d54', '#6d73d9'];
+      let models = [];
+      let activeModel = null;
+      let data = { cloudPoints: [], mesh: null, partPoints: [], center: [0, 0, 0], radius: 1 };
+      let zoom = 1;
+      let angle = 0;
+      let loadingToken = 0;
+      let program = null;
+      let buffers = null;
+
+      function setStatus(text) {
+        cloudStatus.textContent = text;
+        meshStatus.textContent = text;
+      }
+
+      async function readText(path) {
+        const response = await fetch(path);
+        if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
+        return response.text();
+      }
+
+      async function loadManifest() {
+        const manifest = await fetch('data/manifest.json').then((response) => {
+          if (!response.ok) throw new Error('manifest missing');
+          return response.json();
+        });
+        models = manifest.models || [];
+        select.innerHTML = models.map((model) => `<option value="${model.id}">${model.id}</option>`).join('');
+        if (!models.length) throw new Error('No models found in data/manifest.json');
+        activeModel = models[0];
+        select.value = activeModel.id;
+      }
+
+
+      function updateImages(model) {
+        if (!imageGrid) return;
+        const images = model.images || [];
+        if (!images.length) {
+          imageGrid.innerHTML = '<div class="image-grid-empty">No input images found.</div>';
+          return;
+        }
+        imageGrid.innerHTML = images.map((src, index) => `<img src="${src}" alt="${model.id} input view ${index}">`).join('');
+      }
+      function colorFromLabel(label) {
+        const numeric = Number(label);
+        if (!Number.isFinite(numeric)) return '#8a8a8a';
+        return palette[Math.abs(Math.trunc(numeric)) % palette.length];
+      }
+
+      function rgbArray(color) {
+        if (color.startsWith('#')) {
+          const value = color.slice(1);
+          return [parseInt(value.slice(0, 2), 16) / 255, parseInt(value.slice(2, 4), 16) / 255, parseInt(value.slice(4, 6), 16) / 255];
+        }
+        const nums = color.match(/\d+/g) || ['40', '120', '189'];
+        return nums.slice(0, 3).map((n) => Number(n) / 255);
+      }
+
+      function updateLabelLegend(labels) {
+        labelLegend.innerHTML = labels.map((label) => {
+          const color = colorFromLabel(label);
+          return `<span class="label-chip"><i style="background:${color}"></i>${label}</span>`;
+        }).join('');
+      }
+
+      function parsePcd(text) {
+        const lines = text.split(/\r?\n/);
+        const fieldsLine = lines.find((line) => line.trim().toLowerCase().startsWith('fields')) || '';
+        const fields = fieldsLine.trim().split(/\s+/).slice(1);
+        const xIndex = Math.max(0, fields.indexOf('x'));
+        const yIndex = fields.indexOf('y') >= 0 ? fields.indexOf('y') : 1;
+        const zIndex = fields.indexOf('z') >= 0 ? fields.indexOf('z') : 2;
+        const labelIndex = fields.indexOf('label');
+        const dataIndex = lines.findIndex((line) => line.trim().toLowerCase().startsWith('data'));
+        if (dataIndex < 0) return [];
+        const points = [];
+        for (let i = dataIndex + 1; i < lines.length; i += 1) {
+          const parts = lines[i].trim().split(/\s+/);
+          if (parts.length < 3) continue;
+          const p = [Number(parts[xIndex]), Number(parts[yIndex]), Number(parts[zIndex])];
+          if (!p.every(Number.isFinite)) continue;
+          const label = labelIndex >= 0 ? parts[labelIndex] : '0';
+          points.push({ p, label, color: colorFromLabel(label) });
+        }
+        return points;
+      }
+
+      function parseObj(text, fallbackColor) {
+        const verts = [];
+        const faces = [];
+        const lines = text.split(/\r?\n/);
+        for (const line of lines) {
+          if (line.startsWith('v ')) {
+            const parts = line.trim().split(/\s+/).map(Number);
+            const color = parts.length >= 7
+              ? [parts[4], parts[5], parts[6]]
+              : rgbArray(fallbackColor);
+            verts.push({ p: [parts[1], parts[2], parts[3]], color });
+          } else if (line.startsWith('f ')) {
+            const ids = line.trim().split(/\s+/).slice(1).map((part) => {
+              const raw = Number(part.split('/')[0]);
+              return raw < 0 ? verts.length + raw : raw - 1;
+            }).filter((id) => Number.isInteger(id) && id >= 0 && id < verts.length);
+            for (let i = 1; i < ids.length - 1; i += 1) faces.push([ids[0], ids[i], ids[i + 1]]);
+          }
+        }
+        return { verts, faces };
+      }
+
+      function computeBounds(cloudPoints, meshes) {
+        const min = [Infinity, Infinity, Infinity];
+        const max = [-Infinity, -Infinity, -Infinity];
+        const include = (p) => {
+          for (let i = 0; i < 3; i += 1) {
+            min[i] = Math.min(min[i], p[i]);
+            max[i] = Math.max(max[i], p[i]);
+          }
+        };
+        cloudPoints.forEach((point) => include(point.p));
+        meshes.forEach((mesh) => mesh.verts.forEach((vert) => include(vert.p)));
+        if (arguments.length > 2) arguments[2].forEach((vert) => include(vert.p));
+        if (!Number.isFinite(min[0])) return { center: [0, 0, 0], radius: 1 };
+        return {
+          center: [(min[0] + max[0]) / 2, (min[1] + max[1]) / 2, (min[2] + max[2]) / 2],
+          radius: Math.max(max[0] - min[0], max[1] - min[1], max[2] - min[2]) || 1
+        };
+      }
+
+      function normal(a, b, c) {
+        const ux = b[0] - a[0];
+        const uy = b[1] - a[1];
+        const uz = b[2] - a[2];
+        const vx = c[0] - a[0];
+        const vy = c[1] - a[1];
+        const vz = c[2] - a[2];
+        const nx = uy * vz - uz * vy;
+        const ny = uz * vx - ux * vz;
+        const nz = ux * vy - uy * vx;
+        const len = Math.hypot(nx, ny, nz) || 1;
+        return [nx / len, ny / len, nz / len];
+      }
+
+      function parseObjVertices(text, fallbackColor) {
+        const verts = [];
+        const color = rgbArray(fallbackColor);
+        const lines = text.split(/\\r?\\n/);
+        for (const line of lines) {
+          if (!line.startsWith('v ')) continue;
+          const parts = line.trim().split(/\\s+/).map(Number);
+          const c = parts.length >= 7 ? [parts[4], parts[5], parts[6]] : color;
+          verts.push({ p: [parts[1], parts[2], parts[3]], color: c });
+        }
+        return verts;
+      }
+
+      function buildPointBuffers(verts, center, radius) {
+        const positions = [];
+        const colors = [];
+        for (const vert of verts) {
+          positions.push((vert.p[0] - center[0]) / radius, (vert.p[1] - center[1]) / radius, (vert.p[2] - center[2]) / radius);
+          colors.push(1, 0, 0);
+        }
+        return { positions: new Float32Array(positions), colors: new Float32Array(colors), count: positions.length / 3 };
+      }
+
+      function buildMeshBuffers(meshes, center, radius) {
+        const positions = [];
+        const colors = [];
+        const normals = [];
+        for (const mesh of meshes) {
+          for (const face of mesh.faces) {
+            const tri = face.map((id) => mesh.verts[id]);
+            const n = normal(tri[0].p, tri[1].p, tri[2].p);
+            for (const vert of tri) {
+              positions.push((vert.p[0] - center[0]) / radius, (vert.p[1] - center[1]) / radius, (vert.p[2] - center[2]) / radius);
+              colors.push(vert.color[0], vert.color[1], vert.color[2]);
+              normals.push(n[0], n[1], n[2]);
+            }
+          }
+        }
+        return {
+          positions: new Float32Array(positions),
+          colors: new Float32Array(colors),
+          normals: new Float32Array(normals),
+          count: positions.length / 3
+        };
+      }
+
+      function decimate(array, maxItems) {
+        if (array.length <= maxItems) return array;
+        const stride = Math.ceil(array.length / maxItems);
+        return array.filter((_, index) => index % stride === 0);
+      }
+
+      function createShader(type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader));
+        return shader;
+      }
+
+      function initWebGL() {
+        if (!gl) {
+          meshStatus.textContent = 'WebGL is not available in this browser.';
+          return false;
+        }
+        const vertex = createShader(gl.VERTEX_SHADER, `
+          attribute vec3 aPosition;
+          attribute vec3 aColor;
+          attribute vec3 aNormal;
+          uniform float uAngle;
+          uniform float uAspect;
+          uniform float uZoom;
+          uniform float uIsPointPass;
+          varying vec3 vColor;
+
+          vec3 rotate(vec3 p) {
+            float cy = cos(uAngle);
+            float sy = sin(uAngle);
+            float cx = cos(-0.42);
+            float sx = sin(-0.42);
+            float x1 = p.x * cy - p.z * sy;
+            float z1 = p.x * sy + p.z * cy;
+            float y1 = p.y * cx - z1 * sx;
+            float z2 = p.y * sx + z1 * cx;
+            return vec3(x1, y1, z2);
+          }
+
+          void main() {
+            vec3 p = rotate(aPosition);
+            float shade = 1.0;
+            if (uIsPointPass < 0.5) {
+              vec3 n = normalize(rotate(aNormal));
+              vec3 light = normalize(vec3(-0.35, 0.55, 0.78));
+              shade = 0.48 + 0.52 * max(dot(n, light), 0.0);
+            }
+            float persp = 1.9 / (3.675 + p.z);
+            gl_Position = vec4(p.x * persp * 1.55 * uZoom / uAspect, p.y * persp * 1.55 * uZoom, p.z * 0.16, 1.0);
+            gl_PointSize = 6.0;
+            vColor = aColor * shade;
+          }
+        `);
+        const fragment = createShader(gl.FRAGMENT_SHADER, `
+          precision mediump float;
+          varying vec3 vColor;
+          void main() {
+            gl_FragColor = vec4(vColor, 1.0);
+          }
+        `);
+        program = gl.createProgram();
+        gl.attachShader(program, vertex);
+        gl.attachShader(program, fragment);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+        gl.useProgram(program);
+        gl.enable(gl.DEPTH_TEST);
+        gl.disable(gl.BLEND);
+        return true;
+      }
+
+      function uploadMesh(mesh) {
+        if (!program) return;
+        const makeBuffer = (name, dataArray) => {
+          const location = gl.getAttribLocation(program, name);
+          const buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(gl.ARRAY_BUFFER, dataArray, gl.STATIC_DRAW);
+          gl.enableVertexAttribArray(location);
+          gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+          return buffer;
+        };
+        buffers = {
+          mesh: {
+            position: makeBuffer('aPosition', mesh.positions),
+            color: makeBuffer('aColor', mesh.colors),
+            normal: makeBuffer('aNormal', mesh.normals),
+            count: mesh.count
+          },
+          points: null
+        };
+      }
+
+
+      function uploadPointVertices(points) {
+        if (!program || !buffers) return;
+        const makeBuffer = (name, dataArray) => {
+          const location = gl.getAttribLocation(program, name);
+          const buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(gl.ARRAY_BUFFER, dataArray, gl.STATIC_DRAW);
+          gl.enableVertexAttribArray(location);
+          gl.vertexAttribPointer(location, 3, gl.FLOAT, false, 0, 0);
+          return buffer;
+        };
+        const zeroNormals = new Float32Array(points.positions.length);
+        buffers.points = {
+          position: makeBuffer('aPosition', points.positions),
+          color: makeBuffer('aColor', points.colors),
+          normal: makeBuffer('aNormal', zeroNormals),
+          count: points.count
+        };
+      }
+      async function loadModel(model) {
+        const token = ++loadingToken;
+        setStatus(`Loading ${model.id}...`);
+        updateImages(model);
+        const cloudPoints = parsePcd(await readText(model.pcd));
+        const meshes = [];
+        const facePaths = model.faces || [];
+        for (let i = 0; i < facePaths.length; i += 1) {
+          meshes.push(parseObj(await readText(facePaths[i]), palette[i % palette.length]));
+        }
+        if (model.lines) meshes.push(parseObj(await readText(model.lines), '#0000ff'));
+        const partPoints = model.points ? parseObjVertices(await readText(model.points), '#ff0000') : [];
+        if (token !== loadingToken) return;
+
+        const bounds = computeBounds(cloudPoints, meshes, partPoints);
+        const mesh = buildMeshBuffers(meshes, bounds.center, bounds.radius);
+        const pointMesh = buildPointBuffers(partPoints, bounds.center, bounds.radius);
+        const labels = Array.from(new Set(cloudPoints.map((point) => point.label))).sort((a, b) => Number(a) - Number(b));
+        data = {
+          cloudPoints: decimate(cloudPoints, 16000),
+          mesh,
+          partPoints: pointMesh,
+          center: bounds.center,
+          radius: bounds.radius
+        };
+        updateLabelLegend(labels);
+        uploadMesh(mesh);
+        uploadPointVertices(pointMesh);
+        cloudStatus.textContent = `${model.id}: ${data.cloudPoints.length.toLocaleString()} points / ${labels.length} labels`;
+        meshStatus.textContent = `${model.id}: ${mesh.count.toLocaleString()} mesh vertices / ${pointMesh.count.toLocaleString()} point vertices`;
+      }
+
+      function resizeCanvas(canvas, ctx) {
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+        if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function rotatePoint(p) {
+        const x = (p[0] - data.center[0]) / data.radius;
+        const y = (p[1] - data.center[1]) / data.radius;
+        const z = (p[2] - data.center[2]) / data.radius;
+        const cy = Math.cos(angle);
+        const sy = Math.sin(angle);
+        const cx = Math.cos(-0.42);
+        const sx = Math.sin(-0.42);
+        const x1 = x * cy - z * sy;
+        const z1 = x * sy + z * cy;
+        const y1 = y * cx - z1 * sx;
+        const z2 = y * sx + z1 * cx;
+        return [x1, y1, z2];
+      }
+
+      function projectRotated(p, width, height) {
+        const perspective = 1.9 / (3.675 + p[2]);
+        const scale = Math.min(width, height) * 1.38 * zoom;
+        return { x: width / 2 + p[0] * scale * perspective, y: height / 2 - p[1] * scale * perspective };
+      }
+
+      function drawCloud() {
+        resizeCanvas(cloudCanvas, cloudCtx);
+        const width = cloudCanvas.clientWidth;
+        const height = cloudCanvas.clientHeight;
+        cloudCtx.clearRect(0, 0, width, height);
+        for (const point of data.cloudPoints) {
+          const p = projectRotated(rotatePoint(point.p), width, height);
+          cloudCtx.fillStyle = point.color;
+          cloudCtx.fillRect(p.x, p.y, 2, 2);
+        }
+      }
+
+      function drawMesh() {
+        if (!gl || !program || !buffers) return;
+        resizeCanvas(meshCanvas, null);
+        gl.viewport(0, 0, meshCanvas.width, meshCanvas.height);
+        gl.clearColor(0.965, 0.98, 1.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.useProgram(program);
+        gl.uniform1f(gl.getUniformLocation(program, 'uAngle'), angle);
+        gl.uniform1f(gl.getUniformLocation(program, 'uAspect'), meshCanvas.clientWidth / Math.max(1, meshCanvas.clientHeight));
+        gl.uniform1f(gl.getUniformLocation(program, 'uZoom'), zoom);
+        const bindSet = (set) => {
+          if (!set || !set.count) return false;
+          const posLoc = gl.getAttribLocation(program, 'aPosition');
+          const colorLoc = gl.getAttribLocation(program, 'aColor');
+          const normalLoc = gl.getAttribLocation(program, 'aNormal');
+          gl.bindBuffer(gl.ARRAY_BUFFER, set.position); gl.vertexAttribPointer(posLoc, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, set.color); gl.vertexAttribPointer(colorLoc, 3, gl.FLOAT, false, 0, 0);
+          gl.bindBuffer(gl.ARRAY_BUFFER, set.normal); gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 0, 0);
+          return true;
+        };
+        const pointPassLoc = gl.getUniformLocation(program, 'uIsPointPass');
+        gl.uniform1f(pointPassLoc, 0.0);
+        if (bindSet(buffers.mesh)) gl.drawArrays(gl.TRIANGLES, 0, buffers.mesh.count);
+        gl.uniform1f(pointPassLoc, 1.0);
+        if (bindSet(buffers.points)) gl.drawArrays(gl.POINTS, 0, buffers.points.count);
+      }
+
+      function draw() {
+        angle += 0.0064;
+        drawCloud();
+        drawMesh();
+        requestAnimationFrame(draw);
+      }
+
+      select.addEventListener('change', () => {
+        activeModel = models.find((model) => model.id === select.value) || models[0];
+        if (activeModel) loadModel(activeModel).catch((error) => setStatus(error.message));
+      });
+      const handleWheel = (event) => {
+        event.preventDefault();
+        zoom *= event.deltaY > 0 ? 0.92 : 1.08;
+        zoom = Math.max(0.45, Math.min(2.5, zoom));
+      };
+      cloudCanvas.addEventListener('wheel', handleWheel, { passive: false });
+      meshCanvas.addEventListener('wheel', handleWheel, { passive: false });
+
+      window.addEventListener('resize', () => {
+        drawCloud();
+        drawMesh();
+      });
+
+      try {
+        initWebGL();
+      } catch (error) {
+        meshStatus.textContent = error.message;
+      }
+
+      loadManifest()
+        .then(() => loadModel(activeModel))
+        .catch(() => setStatus('Run a local web server to load data/manifest.json and model files.'));
+      draw();
+    })();
+  </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

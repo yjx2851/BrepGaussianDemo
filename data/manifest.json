@@ -1,0 +1,241 @@
+﻿{
+    "models":  [
+                   {
+                       "id":  "00007128",
+                       "images":  [
+                                      "data/00007128/0_colors.png",
+                                      "data/00007128/1_colors.png",
+                                      "data/00007128/2_colors.png",
+                                      "data/00007128/3_colors.png"
+                                  ],
+                       "pcd":  "data/00007128/merged.pcd",
+                       "faces":  [
+                                     "data/00007128/parts/face_00000.obj",
+                                     "data/00007128/parts/face_00001.obj",
+                                     "data/00007128/parts/face_00002.obj",
+                                     "data/00007128/parts/face_00003.obj",
+                                     "data/00007128/parts/face_00004.obj",
+                                     "data/00007128/parts/face_00005.obj",
+                                     "data/00007128/parts/face_00006.obj",
+                                     "data/00007128/parts/face_00007.obj",
+                                     "data/00007128/parts/face_00008.obj"
+                                 ],
+                       "lines":  "data/00007128/parts/lines.obj",
+                       "points":  "data/00007128/parts/points.obj"
+                   },
+                   {
+                       "id":  "00003173",
+                       "images":  [
+                                      "data/00003173/0_colors.png",
+                                      "data/00003173/1_colors.png",
+                                      "data/00003173/2_colors.png",
+                                      "data/00003173/3_colors.png"
+                                  ],
+                       "pcd":  "data/00003173/merged.pcd",
+                       "faces":  [
+                                     "data/00003173/parts/face_00000.obj",
+                                     "data/00003173/parts/face_00001.obj",
+                                     "data/00003173/parts/face_00002.obj",
+                                     "data/00003173/parts/face_00003.obj",
+                                     "data/00003173/parts/face_00004.obj",
+                                     "data/00003173/parts/face_00005.obj",
+                                     "data/00003173/parts/face_00006.obj",
+                                     "data/00003173/parts/face_00007.obj"
+                                 ],
+                       "lines":  "data/00003173/parts/lines.obj",
+                       "points":  "data/00003173/parts/points.obj"
+                   },
+                   {
+                       "id":  "00003014",
+                       "images":  [
+                                      "data/00003014/0_colors.png",
+                                      "data/00003014/1_colors.png",
+                                      "data/00003014/2_colors.png",
+                                      "data/00003014/3_colors.png"
+                                  ],
+                       "pcd":  "data/00003014/merged.pcd",
+                       "faces":  [
+                                     "data/00003014/parts/face_00000.obj",
+                                     "data/00003014/parts/face_00001.obj",
+                                     "data/00003014/parts/face_00002.obj",
+                                     "data/00003014/parts/face_00003.obj",
+                                     "data/00003014/parts/face_00004.obj",
+                                     "data/00003014/parts/face_00005.obj",
+                                     "data/00003014/parts/face_00006.obj",
+                                     "data/00003014/parts/face_00007.obj",
+                                     "data/00003014/parts/face_00008.obj",
+                                     "data/00003014/parts/face_00009.obj"
+                                 ],
+                       "lines":  "data/00003014/parts/lines.obj",
+                       "points":  "data/00003014/parts/points.obj"
+                   },
+                   {
+                       "id":  "00002852",
+                       "images":  [
+                                      "data/00002852/0_colors.png",
+                                      "data/00002852/1_colors.png",
+                                      "data/00002852/2_colors.png",
+                                      "data/00002852/3_colors.png"
+                                  ],
+                       "pcd":  "data/00002852/merged.pcd",
+                       "faces":  [
+                                     "data/00002852/parts/face_00000.obj",
+                                     "data/00002852/parts/face_00001.obj",
+                                     "data/00002852/parts/face_00002.obj",
+                                     "data/00002852/parts/face_00003.obj",
+                                     "data/00002852/parts/face_00004.obj",
+                                     "data/00002852/parts/face_00005.obj",
+                                     "data/00002852/parts/face_00006.obj",
+                                     "data/00002852/parts/face_00007.obj",
+                                     "data/00002852/parts/face_00008.obj",
+                                     "data/00002852/parts/face_00009.obj",
+                                     "data/00002852/parts/face_00010.obj",
+                                     "data/00002852/parts/face_00011.obj",
+                                     "data/00002852/parts/face_00012.obj"
+                                 ],
+                       "lines":  "data/00002852/parts/lines.obj",
+                       "points":  "data/00002852/parts/points.obj"
+                   },
+                   {
+                       "id":  "00002345",
+                       "images":  [
+                                      "data/00002345/0_colors.png",
+                                      "data/00002345/1_colors.png",
+                                      "data/00002345/2_colors.png",
+                                      "data/00002345/3_colors.png"
+                                  ],
+                       "pcd":  "data/00002345/merged.pcd",
+                       "faces":  [
+                                     "data/00002345/parts/face_00000.obj",
+                                     "data/00002345/parts/face_00001.obj",
+                                     "data/00002345/parts/face_00002.obj",
+                                     "data/00002345/parts/face_00003.obj",
+                                     "data/00002345/parts/face_00004.obj",
+                                     "data/00002345/parts/face_00005.obj",
+                                     "data/00002345/parts/face_00006.obj",
+                                     "data/00002345/parts/face_00007.obj"
+                                 ],
+                       "lines":  "data/00002345/parts/lines.obj",
+                       "points":  "data/00002345/parts/points.obj"
+                   },
+                   {
+                       "id":  "00001776",
+                       "images":  [
+                                      "data/00001776/0_colors.png",
+                                      "data/00001776/1_colors.png",
+                                      "data/00001776/2_colors.png",
+                                      "data/00001776/3_colors.png"
+                                  ],
+                       "pcd":  "data/00001776/merged.pcd",
+                       "faces":  [
+                                     "data/00001776/parts/face_00000.obj",
+                                     "data/00001776/parts/face_00001.obj",
+                                     "data/00001776/parts/face_00002.obj",
+                                     "data/00001776/parts/face_00003.obj",
+                                     "data/00001776/parts/face_00004.obj",
+                                     "data/00001776/parts/face_00005.obj",
+                                     "data/00001776/parts/face_00006.obj",
+                                     "data/00001776/parts/face_00007.obj",
+                                     "data/00001776/parts/face_00008.obj",
+                                     "data/00001776/parts/face_00009.obj",
+                                     "data/00001776/parts/face_00010.obj",
+                                     "data/00001776/parts/face_00011.obj"
+                                 ],
+                       "lines":  "data/00001776/parts/lines.obj",
+                       "points":  "data/00001776/parts/points.obj"
+                   },
+                   {
+                       "id":  "00001204",
+                       "images":  [
+                                      "data/00001204/0_colors.png",
+                                      "data/00001204/1_colors.png",
+                                      "data/00001204/2_colors.png",
+                                      "data/00001204/3_colors.png"
+                                  ],
+                       "pcd":  "data/00001204/merged.pcd",
+                       "faces":  [
+                                     "data/00001204/parts/face_00000.obj",
+                                     "data/00001204/parts/face_00001.obj",
+                                     "data/00001204/parts/face_00002.obj",
+                                     "data/00001204/parts/face_00003.obj",
+                                     "data/00001204/parts/face_00004.obj",
+                                     "data/00001204/parts/face_00005.obj",
+                                     "data/00001204/parts/face_00006.obj",
+                                     "data/00001204/parts/face_00007.obj",
+                                     "data/00001204/parts/face_00008.obj",
+                                     "data/00001204/parts/face_00009.obj",
+                                     "data/00001204/parts/face_00010.obj",
+                                     "data/00001204/parts/face_00011.obj",
+                                     "data/00001204/parts/face_00012.obj"
+                                 ],
+                       "lines":  "data/00001204/parts/lines.obj",
+                       "points":  "data/00001204/parts/points.obj"
+                   },
+                   {
+                       "id":  "00000699",
+                       "images":  [
+                                      "data/00000699/0_colors.png",
+                                      "data/00000699/1_colors.png",
+                                      "data/00000699/2_colors.png",
+                                      "data/00000699/3_colors.png"
+                                  ],
+                       "pcd":  "data/00000699/merged.pcd",
+                       "faces":  [
+                                     "data/00000699/parts/face_00000.obj",
+                                     "data/00000699/parts/face_00001.obj",
+                                     "data/00000699/parts/face_00002.obj",
+                                     "data/00000699/parts/face_00003.obj",
+                                     "data/00000699/parts/face_00004.obj",
+                                     "data/00000699/parts/face_00005.obj",
+                                     "data/00000699/parts/face_00006.obj",
+                                     "data/00000699/parts/face_00007.obj"
+                                 ],
+                       "lines":  "data/00000699/parts/lines.obj",
+                       "points":  "data/00000699/parts/points.obj"
+                   },
+                   {
+                       "id":  "00000411",
+                       "images":  [
+                                      "data/00000411/0_colors.png",
+                                      "data/00000411/1_colors.png",
+                                      "data/00000411/2_colors.png",
+                                      "data/00000411/3_colors.png"
+                                  ],
+                       "pcd":  "data/00000411/merged.pcd",
+                       "faces":  [
+                                     "data/00000411/parts/face_00000.obj",
+                                     "data/00000411/parts/face_00001.obj",
+                                     "data/00000411/parts/face_00002.obj",
+                                     "data/00000411/parts/face_00003.obj",
+                                     "data/00000411/parts/face_00004.obj"
+                                 ],
+                       "lines":  "data/00000411/parts/lines.obj",
+                       "points":  null
+                   },
+                   {
+                       "id":  "00000006",
+                       "images":  [
+                                      "data/00000006/0_colors.png",
+                                      "data/00000006/1_colors.png",
+                                      "data/00000006/2_colors.png",
+                                      "data/00000006/3_colors.png"
+                                  ],
+                       "pcd":  "data/00000006/merged.pcd",
+                       "faces":  [
+                                     "data/00000006/parts/face_00000.obj",
+                                     "data/00000006/parts/face_00001.obj",
+                                     "data/00000006/parts/face_00002.obj",
+                                     "data/00000006/parts/face_00003.obj",
+                                     "data/00000006/parts/face_00004.obj",
+                                     "data/00000006/parts/face_00005.obj",
+                                     "data/00000006/parts/face_00006.obj",
+                                     "data/00000006/parts/face_00007.obj",
+                                     "data/00000006/parts/face_00008.obj",
+                                     "data/00000006/parts/face_00009.obj",
+                                     "data/00000006/parts/face_00010.obj"
+                                 ],
+                       "lines":  "data/00000006/parts/lines.obj",
+                       "points":  "data/00000006/parts/points.obj"
+                   }
+               ]
+}
